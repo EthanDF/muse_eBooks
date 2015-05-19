@@ -9,11 +9,24 @@ import tkinter
 root = tkinter.Tk()
 root.withdraw()
 
+def checkForAccess(requestText):
+    """given a request text result - review for access"""
+    accessText = 'title_access_icon" class="access_yes">'
+
+    a = -1
+    if accessText in requestText:
+        a = 1
+    else:
+        a= 0
+
+    return a
+
 def testMuseURL(url):
     """checks for the response and the accuracy of a given MUSE URL"""
 
+    requestResult = []
     result = 0
-    r = requests.get(testurl, verify=False)
+    r = requests.get(url, verify=False)
 
     rcode = r.status_code
     # print(rcode)
@@ -22,12 +35,18 @@ def testMuseURL(url):
         result = 0
 
     # print(r.url)
-    if r.url == 'http://muse.jhu.edu/':
+    if r.url == 'https://muse.jhu.edu/':
         result = 1
     else:
         result = 2
 
-    return result
+    accessResult = checkForAccess(r.text)
+
+    requestResult = [result, accessResult]
+
+    return requestResult
+
+
 
 def loadtests():
     museFile = 'museURLs.csv'
@@ -50,8 +69,9 @@ def logResults(resultList):
     ctrlnum = resultList[1]
     url = resultList[2]
     urlResult = resultList[3]
+    accessResult = resultList[4]
 
-    data = [[now,str(sysID), str(ctrlnum), str(url), str(urlResult)]]
+    data = [[now,str(sysID), str(ctrlnum), str(url), str(urlResult), str(accessResult)]]
 
     # print (data)
     # resultsFile = 'c:\\users\\fenichele\\desktop\\resultsFile.csv'
@@ -64,7 +84,7 @@ def museeBook():
 
     museList = loadtests()
 
-    for a in museList:
+    for a in museList[0:10]:
         outcome =[]
         # bib = a[0]
         # utl = a[1]
@@ -74,17 +94,18 @@ def museeBook():
 
         result = 0
         result = testMuseURL(a[2])
-        if result == 2:
+
+        if result[0] == 2:
             pass
             # print("no problem")
-        elif result == 1:
-            print("URL Resolves to MUSE Homepage")
-        elif result == 0:
+        elif result[0] == 1:
+            print(a[2], "URL Resolves to MUSE Homepage")
+        elif result[0] == 0:
             print("Invalid URL")
         else:
             print ("unknown result")
 
-        outcome = [a[0],a[1],a[2],result]
+        outcome = [a[0],a[1],a[2],result[0],result[1]]
 
         logResults(outcome)
 
