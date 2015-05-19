@@ -84,7 +84,7 @@ def museeBook():
 
     museList = loadtests()
 
-    for a in museList[0:10]:
+    for a in museList:
         outcome =[]
         # bib = a[0]
         # utl = a[1]
