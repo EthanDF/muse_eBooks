@@ -48,8 +48,8 @@ def testMuseURL(url):
 
 
 
-def loadtests():
-    museFile = 'museURLs.csv'
+def loadtests(csvFile):
+    museFile = csvFile
     museList = []
     with open(museFile, 'r') as f:
         reader = csv.reader(f)
@@ -82,7 +82,11 @@ def logResults(resultList):
 def museeBook():
     testurl = 'https://muse.jhu.edu/books/9781631011566/'
 
-    museList = loadtests()
+    from tkinter import filedialog
+    marcPath = tkinter.filedialog.askopenfile()
+    marcFile = marcPath.name
+
+    museList = loadtests(marcFile)
 
     for a in museList:
         outcome =[]
