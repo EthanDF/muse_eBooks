@@ -1,8 +1,10 @@
 #__author__ = 'staff'
 
-import requests
+import urllib
+from urllib import request
 import csv
 import tkinter
+import os
 
 # r = requests(testurl)
 
@@ -15,8 +17,10 @@ def checkForAccess(requestText):
 
     a = -1
     if accessText in requestText:
+        #access yes
         a = 1
     else:
+        #access no
         a= 0
 
     return a
@@ -26,21 +30,22 @@ def testMuseURL(url):
 
     requestResult = []
     result = 0
-    r = requests.get(url, verify=False)
+    r = urllib.request.urlopen(url)
 
-    rcode = r.status_code
+    rcode = r.code
     # print(rcode)
 
     if rcode != 200:
         result = 0
 
     # print(r.url)
-    if r.url == 'https://muse.jhu.edu/':
+    if r.url == 'https://muse.jhu.edu/' or r.url == 'http://muse.jhu.edu/':
         result = 1
     else:
         result = 2
 
-    accessResult = checkForAccess(r.text)
+    rBinary = r.readall()
+    accessResult = checkForAccess(rBinary.decode())
 
     requestResult = [result, accessResult]
 
@@ -112,5 +117,8 @@ def museeBook():
         outcome = [a[0],a[1],a[2],result[0],result[1]]
 
         logResults(outcome)
+    print('...done')
+    input('press any key to launch the log file')
+    os.system("start "+'logresults.csv')
 
 museeBook()
